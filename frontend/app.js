@@ -14,6 +14,8 @@ createApp({
 
     const dreams = ref([]);
     const randomDream = ref(null);
+    const dreamReminder = ref(null);
+    const reminderLoading = ref(false);
     const monthlyStats = ref({ count: 0, avgLucidity: 0 });
 
     const now = new Date();
@@ -125,6 +127,7 @@ createApp({
       user.value = null;
       dreams.value = [];
       randomDream.value = null;
+      dreamReminder.value = null;
     }
 
     async function fetchDreams() {
@@ -140,6 +143,19 @@ createApp({
       try {
         const data = await apiRequest('/dreams/random');
         randomDream.value = data;
+        dreamReminder.value = null;
+        reminderLoading.value = true;
+        try {
+          const reminder = await apiRequest('/dreams/remind', {
+            method: 'POST',
+            body: JSON.stringify({ content: data.content, lucidity: data.lucidity, date: data.date })
+          });
+          dreamReminder.value = reminder;
+        } catch (e) {
+          console.error('获取提醒语失败', e);
+        } finally {
+          reminderLoading.value = false;
+        }
         if (!isPlaying.value) {
           startWhiteNoise();
           setTimeout(() => {
@@ -267,6 +283,8 @@ createApp({
       handleLogout,
       dreams,
       randomDream,
+      dreamReminder,
+      reminderLoading,
       monthlyStats,
       newDream,
       fetchRandomDream,

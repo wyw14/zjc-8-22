@@ -78,6 +78,18 @@
               <div class="dream-lucidity">
                 清醒度: <span v-for="n in 5" :key="n" class="star">{{ n <= randomDream.lucidity ? '★' : '☆' }}</span>
               </div>
+              <div v-if="reminderLoading" class="reminder-loading">
+                <span class="reminder-dots">正在唤醒灵感</span>
+              </div>
+              <div v-else-if="dreamReminder" class="dream-reminder">
+                <div class="reminder-header">💫 创作提醒</div>
+                <div class="reminder-text">{{ dreamReminder.text }}</div>
+                <div class="reminder-hint">💡 {{ dreamReminder.hint }}</div>
+                <div class="reminder-meta">
+                  <span class="reminder-tag">🎭 {{ dreamReminder.theme }}</span>
+                  <span class="reminder-tag">👁️ 清醒度 Lv.{{ dreamReminder.lucidityLevel }}</span>
+                </div>
+              </div>
             </div>
             <div v-else class="empty-dream">
               点击按钮抽取一条旧灵感

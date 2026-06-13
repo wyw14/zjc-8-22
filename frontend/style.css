@@ -321,6 +321,85 @@ body {
   color: #94a3b8;
 }
 
+.dream-reminder {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(167, 139, 250, 0.3);
+  animation: reminderFadeIn 0.6s ease;
+}
+
+@keyframes reminderFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reminder-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #c4b5fd;
+  margin-bottom: 10px;
+}
+
+.reminder-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #e2e8f0;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 10px;
+  border-left: 3px solid #8b5cf6;
+}
+
+.reminder-hint {
+  font-size: 13px;
+  color: #a78bfa;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(236, 72, 153, 0.08);
+  border-radius: 8px;
+}
+
+.reminder-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reminder-tag {
+  display: inline-block;
+  font-size: 12px;
+  color: #94a3b8;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.reminder-loading {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(167, 139, 250, 0.3);
+  text-align: center;
+}
+
+.reminder-dots {
+  color: #94a3b8;
+  font-size: 14px;
+  animation: reminderPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes reminderPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 .star {
   color: #fbbf24;
   margin-right: 2px;
