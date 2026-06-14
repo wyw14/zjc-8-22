@@ -39,6 +39,17 @@ function writeJSON(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+function validateLucidity(lucidity) {
+  const l = parseInt(lucidity);
+  return Number.isInteger(l) && l >= 1 && l <= 5;
+}
+
+function validateDate(dateStr) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  const d = new Date(dateStr);
+  return d instanceof Date && !isNaN(d) && d.toISOString().slice(0, 10) === dateStr;
+}
+
 function initUsers() {
   const users = readJSON(USERS_FILE);
   if (users.length === 0) {
@@ -144,6 +155,12 @@ app.post('/api/dreams', authenticateToken, (req, res) => {
   const { content, lucidity, date } = req.body;
   if (!content || !lucidity || !date) {
     return res.status(400).json({ error: '内容、清醒度和日期必填' });
+  }
+  if (!validateLucidity(lucidity)) {
+    return res.status(400).json({ error: '清醒度必须是 1-5 的整数' });
+  }
+  if (!validateDate(date)) {
+    return res.status(400).json({ error: '日期格式必须是 YYYY-MM-DD 的有效日期' });
   }
 
   const dreams = readJSON(DREAMS_FILE);
@@ -302,6 +319,12 @@ app.post('/api/dreams/remind', authenticateToken, (req, res) => {
   const { content, lucidity, date } = req.body;
   if (!content || !lucidity || !date) {
     return res.status(400).json({ error: '内容、清醒度和日期必填' });
+  }
+  if (!validateLucidity(lucidity)) {
+    return res.status(400).json({ error: '清醒度必须是 1-5 的整数' });
+  }
+  if (!validateDate(date)) {
+    return res.status(400).json({ error: '日期格式必须是 YYYY-MM-DD 的有效日期' });
   }
   const reminder = generateReminder({ content, lucidity, date });
   res.json(reminder);

@@ -40,6 +40,7 @@ createApp({
     let audioContext = null;
     let noiseNode = null;
     let gainNode = null;
+    let fetchSeq = 0;
 
     function getToken() {
       return localStorage.getItem('dream_token');
@@ -140,8 +141,10 @@ createApp({
     }
 
     async function fetchRandomDream() {
+      const currentSeq = ++fetchSeq;
       try {
         const data = await apiRequest('/dreams/random');
+        if (currentSeq !== fetchSeq) return;
         randomDream.value = data;
         dreamReminder.value = null;
         reminderLoading.value = true;
@@ -150,20 +153,29 @@ createApp({
             method: 'POST',
             body: JSON.stringify({ content: data.content, lucidity: data.lucidity, date: data.date })
           });
+          if (currentSeq !== fetchSeq) return;
           dreamReminder.value = reminder;
         } catch (e) {
-          console.error('获取提醒语失败', e);
+          if (currentSeq === fetchSeq) {
+            console.error('获取提醒语失败', e);
+          }
         } finally {
-          reminderLoading.value = false;
+          if (currentSeq === fetchSeq) {
+            reminderLoading.value = false;
+          }
         }
-        if (!isPlaying.value) {
+        if (!isPlaying.value && currentSeq === fetchSeq) {
           startWhiteNoise();
           setTimeout(() => {
-            stopWhiteNoise();
+            if (currentSeq === fetchSeq) {
+              stopWhiteNoise();
+            }
           }, 12000);
         }
       } catch (e) {
-        alert(e.message);
+        if (currentSeq === fetchSeq) {
+          alert(e.message);
+        }
       }
     }
 
@@ -180,9 +192,28 @@ createApp({
       fetchMonthlyStats();
     }
 
+    function validateLucidity(lucidity) {
+      const l = parseInt(lucidity);
+      return Number.isInteger(l) && l >= 1 && l <= 5;
+    }
+
+    function validateDate(dateStr) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+      const d = new Date(dateStr);
+      return d instanceof Date && !isNaN(d) && d.toISOString().slice(0, 10) === dateStr;
+    }
+
     async function addDream() {
       if (!newDream.value.content.trim()) {
         alert('请输入梦境内容');
+        return;
+      }
+      if (!validateLucidity(newDream.value.lucidity)) {
+        alert('清醒度必须是 1-5 的整数');
+        return;
+      }
+      if (!validateDate(newDream.value.date)) {
+        alert('请选择有效的日期');
         return;
       }
 

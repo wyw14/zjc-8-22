@@ -94,8 +94,9 @@
             <div v-else class="empty-dream">
               点击按钮抽取一条旧灵感
             </div>
-            <button class="btn-primary btn-large" @click="fetchRandomDream">
-              🎲 随机抽取
+            <button class="btn-primary btn-large" @click="fetchRandomDream" :disabled="reminderLoading">
+              <span v-if="reminderLoading">⏳ 抽取中...</span>
+              <span v-else>🎲 随机抽取</span>
             </button>
           </div>
 
